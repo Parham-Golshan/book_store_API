@@ -47,12 +47,19 @@ class BookSerializer(serializers.ModelSerializer):
                 with open(file_path, 'rb') as f:
                     stream = io.BytesIO(f.read())
                 data['cover_image'] = File(stream, name=os.path.basename(file_path))
-                # Checking the size of the image
-                if os.path.getsize(file_path) > self.MAX_COVER_IMAGE_SIZE:  # 1MB in bytes
-                    raise serializers.ValidationError('The cover image file is too large (maximum size is 1 MB).')
         elif cover_image:
-            # Checking the size of the image
-            if cover_image.size > self.MAX_COVER_IMAGE_SIZE:
-                raise serializers.ValidationError('The cover image file is too large (maximum size is 1 MB).')
             data['cover_image'] = cover_image
         return super().to_internal_value(data)
+
+    def validate(self, data):
+        # Check if an image is provided
+        image = data.get('cover_image')
+        if image:
+            # Get the image size
+            image_size = image.size
+
+            # Check if the image size is too large
+            if image_size > self.MAX_COVER_IMAGE_SIZE:
+                raise serializers.ValidationError(f"The cover_image size is too large. "
+                                                  f"Maximum allowed size is: {self.MAX_COVER_IMAGE_SIZE // 1000} KB")
+        return data
