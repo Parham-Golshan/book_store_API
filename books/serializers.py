@@ -8,16 +8,16 @@ from book_store import settings
 
 
 class BookSerializer(serializers.ModelSerializer):
-    # Define author and author_pseudonym as read-only fields
+    # Defining author and author_pseudonym as read-only fields
     author = serializers.ReadOnlyField(source='author.user.username')
     author_pseudonym = serializers.ReadOnlyField(source='author.author_pseudonym')
     cover_image = serializers.ImageField(max_length=None, use_url=True, required=False)
 
     MAX_COVER_IMAGE_SIZE = 1 * 1024 * 1024  # 1 MB in bytes
+
     class Meta:
         model = Book
         fields = ['id', 'title', 'description', 'cover_image', 'price', 'author', 'author_pseudonym']
-        # read_only_fields = ['id', 'author', 'author_pseudonym']
 
     def to_internal_value(self, data: dict) -> dict:
         """

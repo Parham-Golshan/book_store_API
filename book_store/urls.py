@@ -26,19 +26,16 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="book_store",
-      default_version='v1',
-      description="My API description",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="contact@myapi.local"),
-      license=openapi.License(name="BSD License"),
-   ),
-   public=True,
-   permission_classes=[permissions.AllowAny],
+    openapi.Info(
+        title="book_store",
+        default_version='v1',
+        description="This is a simple RESTful API built with Django and Django REST Framework. The API allows you to "
+                    "manage books and users.",
+        contact=openapi.Contact(email="parhamgolshan@yahoo.com"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
 )
-
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),

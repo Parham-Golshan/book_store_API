@@ -8,7 +8,6 @@ from traceback import format_exc
 from decimal import Decimal
 from django.urls import reverse
 from .serializers import BookSerializer
-from rest_framework.authtoken.models import Token
 
 
 book_detail_url = lambda pk: reverse('book-detail', args=[pk])
@@ -35,8 +34,6 @@ class BookTestCase(TestCase):
 
 
     def test_create_book(self):
-        # # log in the test user
-        # self.client.login(username='testuser', password='testpass')
         url = reverse('book-list')
         # create a new book
         payload = {
@@ -73,7 +70,6 @@ class BookTestCase(TestCase):
         Test that we can retrieve a single book by its ID
         """
         response = self.client.get(reverse('book-detail', args=[self.book.pk]))
-        # response = self.client.get(book_detail_url(self.book.pk))
         book_serializer = BookSerializer(instance=self.book)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, book_serializer.data)
@@ -83,7 +79,6 @@ class BookTestCase(TestCase):
         Test that a 404 error is returned when attempting to retrieve a book that does not exist
         """
         url = reverse('book-detail', args=[999])
-        # response = self.client.get(book_detail_url(999))
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 

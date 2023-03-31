@@ -1,5 +1,4 @@
 from rest_framework.generics import CreateAPIView, ListAPIView
-from .models import UserProfile
 from .serializers import UserProfileSerializer
 from books.serializers import BookSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -9,6 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.renderers import JSONRenderer
 from rest_framework_xml.renderers import XMLRenderer
 
+
 class UserProfileCreate(CreateAPIView):
     serializer_class = UserProfileSerializer
     renderer_classes = [JSONRenderer, XMLRenderer]
@@ -17,6 +17,7 @@ class UserProfileCreate(CreateAPIView):
 
 class UserBookList(ListAPIView):
     serializer_class = BookSerializer
+    renderer_classes = [JSONRenderer, XMLRenderer]
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
