@@ -4,6 +4,7 @@ from django.core.files import File
 import io
 import os
 from urllib.request import urlopen
+from book_store import settings
 
 
 class BookSerializer(serializers.ModelSerializer):
@@ -12,6 +13,7 @@ class BookSerializer(serializers.ModelSerializer):
     author_pseudonym = serializers.ReadOnlyField(source='author.author_pseudonym')
     cover_image = serializers.ImageField(max_length=None, use_url=True, required=False)
 
+    MAX_COVER_IMAGE_SIZE = 1 * 1024 * 1024  # 1 MB in bytes
     class Meta:
         model = Book
         fields = ['id', 'title', 'description', 'cover_image', 'price', 'author', 'author_pseudonym']
@@ -37,13 +39,20 @@ class BookSerializer(serializers.ModelSerializer):
                 stream = io.BytesIO(response.read())
                 data['cover_image'] = File(stream, name=file_name)
             else:
-                # Remove leading forward slash from cover_image path
-                data['cover_image'] = data['cover_image'].lstrip('/')
-                # Convert the path to a file object
-                file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', data['cover_image']))
+                file_path = data['cover_image']
+                if not os.path.isfile(file_path):
+                    # Convert the path to a file object
+                    file_path = os.path.join(settings.BASE_DIR, data['cover_image'])
+                    file_path = os.path.abspath(file_path)
                 with open(file_path, 'rb') as f:
                     stream = io.BytesIO(f.read())
                 data['cover_image'] = File(stream, name=os.path.basename(file_path))
+                # Checking the size of the image
+                if os.path.getsize(file_path) > self.MAX_COVER_IMAGE_SIZE:  # 1MB in bytes
+                    raise serializers.ValidationError('The cover image file is too large (maximum size is 1 MB).')
         elif cover_image:
+            # Checking the size of the image
+            if cover_image.size > self.MAX_COVER_IMAGE_SIZE:
+                raise serializers.ValidationError('The cover image file is too large (maximum size is 1 MB).')
             data['cover_image'] = cover_image
         return super().to_internal_value(data)
