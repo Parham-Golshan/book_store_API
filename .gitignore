@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE-specific files
+.idea/
+
+# Log files
+*.log
+log/
+
+# Configuration files
+settings_local.py
+*.ini
+*.conf
+
+# Django migration files
+#*/migrations/*.py
+#*/migrations/*.pyc
+#*/migrations/__pycache__/
+
+# DB
+/db.sqlite3
+
+# Media files
+/media/*
+!/media/.gitkeep
